@@ -8,9 +8,8 @@ import * as Animatable from "react-native-animatable";
 
 import { LinearGradient } from "expo-linear-gradient";
 
-import { Alert } from "react-native";
-
-import { AuthContext } from "./../components/context";
+import AuthContext from "./../contexts/auth";
+import DispatchContext from "./../contexts/dispatch";
 
 import Spinner from "react-native-loading-spinner-overlay";
 
@@ -22,12 +21,13 @@ import {
   TextInput,
   TouchableOpacity,
   Platform,
+  Alert,
 } from "react-native";
 
 export default function Login({ navigation }) {
   const [data, setData] = React.useState({
     spinner: false,
-    username: "",
+    email: "",
     password: "",
     check_textInputChange: false,
     secureTextEntry: true,
@@ -35,29 +35,42 @@ export default function Login({ navigation }) {
     isValidPassword: true,
   });
 
-  const { signIn } = React.useContext(AuthContext);
+  const { login } = React.useContext(AuthContext);
+  const { dispatch } = React.useContext(DispatchContext);
 
-  const loginHandle = (userName, password) => {
+  const handleLogin = async (email, password) => {
     if (data.password.length <= 4) {
       setData({
         ...data,
         isValidPassword: false,
       });
     }
-    if (data.username.length === 0) {
+    if (data.email.length === 0) {
       setData({
         ...data,
         isValidUser: false,
       });
     }
-    if (data.password.length >= 4 && data.username.length !== "") {
+    if (data.password.length >= 4 && data.email.length !== "") {
       setData({
         ...data,
         spinner: true,
       });
-      setTimeout(() => {
-        signIn(userName, password);
-      }, 3000);
+      let payload = { email, password };
+      try {
+        let resp = await login(dispatch, payload);
+        if (resp === "OK") {
+          return;
+        }
+        Alert.alert("Erro!", "Email ou senha incorretos", [{ text: "Ok" }]);
+      } catch (error) {
+        console.log("Catch Login", error);
+      } finally {
+        setData({
+          ...data,
+          spinner: false,
+        });
+      }
     }
   };
 
@@ -65,14 +78,14 @@ export default function Login({ navigation }) {
     if (val.trim().length >= 4) {
       setData({
         ...data,
-        username: val,
+        email: val,
         check_textInputChange: true,
         isValidUser: true,
       });
     } else {
       setData({
         ...data,
-        username: val,
+        email: val,
         check_textInputChange: false,
         isValidUser: false,
       });
@@ -95,8 +108,6 @@ export default function Login({ navigation }) {
     }
   };
 
-  const [isLoading, setIsLoading] = useState(false);
-
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#009387" barStyle="light-content" />
@@ -105,16 +116,16 @@ export default function Login({ navigation }) {
       </View>
       <Spinner
         visible={data.spinner}
-        textContent={"Carregando..."}
+        textContent={"Logando..."}
         textStyle={styles.spinnerTextStyle}
       />
 
-      <Text style={[styles.text_footer]}>Username</Text>
+      <Text style={[styles.text_footer]}>Email</Text>
 
       <View style={styles.action}>
         <FontAwesome name="user-o" size={20} />
         <TextInput
-          placeholder="usuário"
+          placeholder="E-mail"
           placeholderTextColor="#666666"
           style={[styles.textInput]}
           onChangeText={(val) => textInputChange(val)}
@@ -141,12 +152,12 @@ export default function Login({ navigation }) {
           },
         ]}
       >
-        Password
+        Senha
       </Text>
       <View style={styles.action}>
         <Feather name="lock" size={20} />
         <TextInput
-          placeholder="Your Password"
+          placeholder="Senha"
           placeholderTextColor="#666666"
           secureTextEntry={false}
           style={[styles.textInput, {}]}
@@ -178,7 +189,7 @@ export default function Login({ navigation }) {
       <View style={styles.button}>
         <TouchableOpacity
           onPress={() => {
-            loginHandle(data.username, data.password);
+            handleLogin(data.email, data.password);
           }}
           style={styles.signIn}
         >

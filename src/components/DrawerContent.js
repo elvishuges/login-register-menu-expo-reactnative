@@ -16,12 +16,23 @@ import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-import { AuthContext } from "./context";
+import AuthContext from "./../contexts/auth";
+import DispatchContext from "./../contexts/dispatch";
 
 export function DrawerContent(props) {
   const paperTheme = useTheme();
 
   const { signOut, toggleTheme } = React.useContext(AuthContext);
+  const { dispatch } = React.useContext(DispatchContext);
+
+  const handleLogout = async (e) => {
+    try {
+      let response = await signOut(dispatch, payload); //loginUser action makes the request and handles all the neccessary state changes
+      if (!response.user) return;
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <View style={{ flex: 1 }}>

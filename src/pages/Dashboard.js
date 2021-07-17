@@ -5,8 +5,6 @@ import { useTheme } from "@react-navigation/native";
 const Dashboard = ({ navigation }) => {
   const { colors } = useTheme();
 
-  const theme = useTheme();
-
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#009387" barStyle="light-content" />

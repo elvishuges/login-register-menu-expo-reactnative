@@ -1,13 +1,15 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { Button, Input } from "react-native-elements";
 
-import Icon from "react-native-vector-icons/FontAwesome";
 import Feather from "react-native-vector-icons/Feather";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import * as Animatable from "react-native-animatable";
+
+import AuthContext from "./../contexts/auth";
 
 import { LinearGradient } from "expo-linear-gradient";
+
+import Spinner from "react-native-loading-spinner-overlay";
+import * as Animatable from "react-native-animatable";
 
 import {
   StyleSheet,
@@ -17,50 +19,64 @@ import {
   TextInput,
   TouchableOpacity,
   Platform,
+  Alert,
 } from "react-native";
 
 export default function Login({ navigation }) {
   const [data, setData] = React.useState({
-    username: "",
+    spinner: false,
+    name: "",
     password: "",
+    email: "",
     check_textInputChange: false,
     secureTextEntry: true,
     isValidUser: true,
     isValidPassword: true,
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const loginHandle = (userName, password) => {
-    if (data.username.length == 0 || data.password.length == 0) {
+
+  const { register } = React.useContext(AuthContext);
+
+  const handleRegister = async (name, email, password) => {
+    setData({
+      ...data,
+      spinner: true,
+    });
+    try {
+      let payload = { email, password, name };
+      let rsp = await register(payload);
+      if (rsp === "OK") {
+        Alert.alert("Sucesso!", "Usuário cadastrado com sucesso", [
+          { text: "Ok" },
+        ]);
+        return;
+      }
+      Alert.alert("Erro!", "Algo deu errado", [{ text: "Ok" }]);
+    } catch (error) {
+      Alert.alert("Erro!", "Algo deu errado", [{ text: "Ok" }]);
+    } finally {
       setData({
         ...data,
-        check_textInputChange: false,
-        isValidUser: false,
+        spinner: false,
       });
-      return;
     }
-    Alert.alert("Formulário submetido.", [{ text: "Okay" }]);
   };
 
-  const textInputChange = (val) => {
-    if (val.trim().length >= 4) {
-      setData({
-        ...data,
-        username: val,
-        check_textInputChange: true,
-        isValidUser: true,
-      });
-    } else {
-      setData({
-        ...data,
-        username: val,
-        check_textInputChange: false,
-        isValidUser: false,
-      });
-    }
+  const handleNameChange = (val) => {
+    setData({
+      ...data,
+      name: val,
+    });
+  };
+
+  const handleEmailChange = (val) => {
+    setData({
+      ...data,
+      email: val,
+    });
   };
 
   const handlePasswordChange = (val) => {
-    if (val.trim().length >= 8) {
+    if (val.trim().length >= 4) {
       setData({
         ...data,
         password: val,
@@ -78,8 +94,33 @@ export default function Login({ navigation }) {
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#009387" barStyle="light-content" />
+      <Spinner
+        visible={data.spinner}
+        textContent={"Cadastrando..."}
+        textStyle={styles.spinnerTextStyle}
+      />
       <View style={styles.image}>
         <Image source={require("./../../assets/login-right.png")} />
+      </View>
+      <Text
+        style={[
+          styles.text_footer,
+          {
+            marginTop: 10,
+          },
+        ]}
+      >
+        Nome
+      </Text>
+      <View style={styles.action}>
+        <FontAwesome name="user-o" size={20} />
+        <TextInput
+          placeholder="Nome"
+          placeholderTextColor="#666666"
+          style={[styles.textInput]}
+          autoCapitalize="none"
+          onChangeText={(val) => handleNameChange(val)}
+        />
       </View>
       <Text
         style={[
@@ -94,10 +135,11 @@ export default function Login({ navigation }) {
       <View style={styles.action}>
         <FontAwesome name="user-o" size={20} />
         <TextInput
-          placeholder="Your e-mail"
+          placeholder="e-mail"
           placeholderTextColor="#666666"
           style={[styles.textInput]}
           autoCapitalize="none"
+          onChangeText={(val) => handleEmailChange(val)}
         />
       </View>
 
@@ -109,31 +151,12 @@ export default function Login({ navigation }) {
           },
         ]}
       >
-        Username
-      </Text>
-      <View style={styles.action}>
-        <FontAwesome name="user-o" size={20} />
-        <TextInput
-          placeholder="Your Username"
-          placeholderTextColor="#666666"
-          style={[styles.textInput]}
-          autoCapitalize="none"
-        />
-      </View>
-      <Text
-        style={[
-          styles.text_footer,
-          {
-            marginTop: 10,
-          },
-        ]}
-      >
-        Password
+        Senha
       </Text>
       <View style={styles.action}>
         <Feather name="lock" size={20} />
         <TextInput
-          placeholder="Your Password"
+          placeholder="Senha"
           placeholderTextColor="#666666"
           secureTextEntry={false}
           style={[styles.textInput, {}]}
@@ -148,6 +171,13 @@ export default function Login({ navigation }) {
           )}
         </TouchableOpacity>
       </View>
+      {data.isValidPassword ? null : (
+        <Animatable.View animation="fadeInLeft" duration={500}>
+          <Text style={styles.errorMsg}>
+            campo deve ter mais de 4 caracteres.
+          </Text>
+        </Animatable.View>
+      )}
 
       <TouchableOpacity onPress={() => navigation.navigate("Login")}>
         <Text style={{ color: "#009387", marginTop: 15 }}>
@@ -156,7 +186,12 @@ export default function Login({ navigation }) {
       </TouchableOpacity>
 
       <View style={styles.button}>
-        <TouchableOpacity style={styles.signIn}>
+        <TouchableOpacity
+          onPress={() => {
+            handleRegister(data.name, data.email, data.password);
+          }}
+          style={styles.signIn}
+        >
           <LinearGradient colors={["#08d4c4", "#01ab9d"]} style={styles.signIn}>
             <Text
               style={[
@@ -181,6 +216,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     paddingTop: 20,
     padding: 10,
+  },
+  spinnerTextStyle: {
+    color: "#FFF",
   },
   image: {
     alignItems: "center",
