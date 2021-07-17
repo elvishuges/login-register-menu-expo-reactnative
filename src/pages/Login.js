@@ -36,7 +36,7 @@ export default function Login({ navigation }) {
   });
 
   const { login } = React.useContext(AuthContext);
-  const { dispatch } = React.useContext(DispatchContext);
+  const dispatch = React.useContext(DispatchContext);
 
   const handleLogin = async (email, password) => {
     if (data.password.length <= 4) {
@@ -74,6 +74,13 @@ export default function Login({ navigation }) {
     }
   };
 
+  const updateSecureTextEntry = () => {
+    setData({
+      ...data,
+      secureTextEntry: !data.secureTextEntry,
+    });
+  };
+
   const textInputChange = (val) => {
     if (val.trim().length >= 4) {
       setData({
@@ -93,7 +100,7 @@ export default function Login({ navigation }) {
   };
 
   const handlePasswordChange = (val) => {
-    if (val.trim().length >= 8) {
+    if (val.trim().length >= 4) {
       setData({
         ...data,
         password: val,
@@ -159,13 +166,13 @@ export default function Login({ navigation }) {
         <TextInput
           placeholder="Senha"
           placeholderTextColor="#666666"
-          secureTextEntry={false}
+          secureTextEntry={data.secureTextEntry ? true : false}
           style={[styles.textInput, {}]}
           autoCapitalize="none"
           onChangeText={(val) => handlePasswordChange(val)}
         />
-        <TouchableOpacity onPress={() => {}}>
-          {true ? (
+        <TouchableOpacity onPress={updateSecureTextEntry}>
+          {data.secureTextEntry ? (
             <Feather name="eye-off" color="grey" size={20} />
           ) : (
             <Feather name="eye" color="grey" size={20} />
@@ -175,7 +182,7 @@ export default function Login({ navigation }) {
       {data.isValidPassword ? null : (
         <Animatable.View animation="fadeInLeft" duration={500}>
           <Text style={styles.errorMsg}>
-            campo deve ter mais de 8 caracteres.
+            campo deve ter mais de 4 caracteres.
           </Text>
         </Animatable.View>
       )}

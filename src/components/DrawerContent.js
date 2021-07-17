@@ -22,12 +22,12 @@ import DispatchContext from "./../contexts/dispatch";
 export function DrawerContent(props) {
   const paperTheme = useTheme();
 
-  const { signOut, toggleTheme } = React.useContext(AuthContext);
-  const { dispatch } = React.useContext(DispatchContext);
+  const { logout, toggleTheme } = React.useContext(AuthContext);
+  const dispatch = React.useContext(DispatchContext);
 
   const handleLogout = async (e) => {
     try {
-      let response = await signOut(dispatch, payload); //loginUser action makes the request and handles all the neccessary state changes
+      let response = await logout(dispatch, payload); //loginUser action makes the request and handles all the neccessary state changes
       if (!response.user) return;
     } catch (error) {
       console.log(error);
@@ -138,7 +138,7 @@ export function DrawerContent(props) {
           )}
           label="Sign Out"
           onPress={() => {
-            signOut();
+            handleLogout();
             props.navigation.closeDrawer();
           }}
         />

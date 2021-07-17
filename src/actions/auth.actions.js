@@ -7,8 +7,8 @@ const authActions = {
       .then((rsp) => {
         dispatch({
           type: "LOGIN",
-          token: rsp.data.access_token, // pick the token
           userName: payload.username,
+          userToken: rsp.data.access_token, // pick the token
         });
         return "OK";
       })
@@ -16,7 +16,7 @@ const authActions = {
         return "Error";
       });
   },
-  signOut: async (dispatch) => {
+  logout: async (dispatch) => {
     try {
       await AsyncStorage.removeItem("userToken");
     } catch (e) {

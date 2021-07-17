@@ -61,6 +61,13 @@ export default function Login({ navigation }) {
     }
   };
 
+  const updateSecureTextEntry = () => {
+    setData({
+      ...data,
+      secureTextEntry: !data.secureTextEntry,
+    });
+  };
+
   const handleNameChange = (val) => {
     setData({
       ...data,
@@ -158,13 +165,13 @@ export default function Login({ navigation }) {
         <TextInput
           placeholder="Senha"
           placeholderTextColor="#666666"
-          secureTextEntry={false}
+          secureTextEntry={data.secureTextEntry ? true : false}
           style={[styles.textInput, {}]}
           autoCapitalize="none"
           onChangeText={(val) => handlePasswordChange(val)}
         />
-        <TouchableOpacity onPress={() => {}}>
-          {true ? (
+        <TouchableOpacity onPress={updateSecureTextEntry}>
+          {data.secureTextEntry ? (
             <Feather name="eye-off" color="grey" size={20} />
           ) : (
             <Feather name="eye" color="grey" size={20} />
