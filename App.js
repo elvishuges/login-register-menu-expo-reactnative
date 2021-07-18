@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer, useMemo } from "react";
 
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -20,9 +20,7 @@ import {
 } from "@react-navigation/native";
 
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { createStackNavigator } from "@react-navigation/stack";
 const Drawer = createDrawerNavigator();
-const Stack = createStackNavigator();
 
 import { DrawerContent } from "./src/components/DrawerContent";
 import authActions from "./src/actions/auth.actions";
@@ -32,14 +30,10 @@ import MainStackPages from "./src/pages/MainStackPages";
 
 import authReducer from "./src/reducers/auth.reducer";
 
-export default function App(props) {
-  const [isDarkTheme, setIsDarkTheme] = React.useState(false);
+import { authPrevState } from "./src/reducers/auth.reducer";
 
-  const authInitialState = {
-    isLoading: true,
-    userName: null,
-    userToken: null,
-  };
+export default function App(props) {
+  const [isDarkTheme] = React.useState(false);
 
   const CustomDefaultTheme = {
     ...NavigationDefaultTheme,
@@ -65,19 +59,36 @@ export default function App(props) {
 
   const theme = isDarkTheme ? CustomDarkTheme : CustomDefaultTheme;
 
-  const [loginState, dispatch] = useReducer(authReducer, authInitialState);
+  const [loginState, dispatch] = useReducer(authReducer, authPrevState);
 
   useEffect(() => {
-    setTimeout(async () => {
-      let userToken;
-      userToken = null;
-      try {
-        userToken = await AsyncStorage.getItem("userToken");
-      } catch (e) {
-        console.log(e);
+    console.log("usereffect");
+    let isCancelled = false;
+    let userToken;
+    userToken = null;
+    AsyncStorage.getItem("userToken").then((item) => {
+      if (!isCancelled) {
+        let userToken = item;
+        dispatch({ type: "RETRIEVE_TOKEN", token: userToken });
       }
-      dispatch({ type: "RETRIEVE_TOKEN", token: userToken });
-    }, 1000);
+    });
+    // try {
+    //   let userToken = await AsyncStorage.getItem("userToken");
+    //   dispatch({ type: "RETRIEVE_TOKEN", token: userToken });
+    // } catch (error) {
+    //   console.log("Error userEffect");
+    // }
+    return () => {
+      isCancelled = true;
+    };
+    // let userToken;
+    // userToken = null;
+    // try {
+    //   userToken = await AsyncStorage.getItem("userToken");
+    // } catch (e) {
+    //   console.log(e);
+    // }
+    // dispatch({ type: "RETRIEVE_TOKEN", token: userToken });
   }, []);
 
   return (

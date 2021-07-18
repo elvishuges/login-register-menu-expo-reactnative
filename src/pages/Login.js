@@ -59,10 +59,9 @@ export default function Login({ navigation }) {
       let payload = { email, password };
       try {
         let resp = await login(dispatch, payload);
-        if (resp === "OK") {
-          return;
+        if (resp === "ERRO") {
+          Alert.alert("Erro!", "Email ou senha incorretos", [{ text: "Ok" }]);
         }
-        Alert.alert("Erro!", "Email ou senha incorretos", [{ text: "Ok" }]);
       } catch (error) {
         console.log("Catch Login", error);
       } finally {
