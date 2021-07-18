@@ -4,8 +4,8 @@ import { StyleSheet } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import AuthContext from "./src/contexts/auth";
-import DispatchContext from "./src/contexts/dispatch";
+import AuthContext from "./src/contexts/user.context";
+import DispatchContext from "./src/contexts/dispatch.context";
 
 import {
   Provider as PaperProvider,
@@ -23,14 +23,14 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 const Drawer = createDrawerNavigator();
 
 import { DrawerContent } from "./src/components/DrawerContent";
-import authActions from "./src/actions/auth.actions";
+import userActions from "./src/actions/user.actions";
 
 import RootStackPages from "./src/pages/RootStackPages";
 import MainStackPages from "./src/pages/MainStackPages";
 
-import authReducer from "./src/reducers/auth.reducer";
+import authReducer from "./src/reducers/user.reducer";
 
-import { authPrevState } from "./src/reducers/auth.reducer";
+import { prevState } from "./src/reducers/user.reducer";
 
 export default function App(props) {
   const [isDarkTheme] = React.useState(false);
@@ -59,41 +59,24 @@ export default function App(props) {
 
   const theme = isDarkTheme ? CustomDarkTheme : CustomDefaultTheme;
 
-  const [loginState, dispatch] = useReducer(authReducer, authPrevState);
+  const [loginState, dispatch] = useReducer(authReducer, prevState);
 
   useEffect(() => {
-    console.log("usereffect");
     let isCancelled = false;
-    let userToken;
-    userToken = null;
     AsyncStorage.getItem("userToken").then((item) => {
       if (!isCancelled) {
         let userToken = item;
         dispatch({ type: "RETRIEVE_TOKEN", token: userToken });
       }
     });
-    // try {
-    //   let userToken = await AsyncStorage.getItem("userToken");
-    //   dispatch({ type: "RETRIEVE_TOKEN", token: userToken });
-    // } catch (error) {
-    //   console.log("Error userEffect");
-    // }
     return () => {
       isCancelled = true;
     };
-    // let userToken;
-    // userToken = null;
-    // try {
-    //   userToken = await AsyncStorage.getItem("userToken");
-    // } catch (e) {
-    //   console.log(e);
-    // }
-    // dispatch({ type: "RETRIEVE_TOKEN", token: userToken });
   }, []);
 
   return (
     <PaperProvider theme={theme}>
-      <AuthContext.Provider value={authActions}>
+      <AuthContext.Provider value={userActions}>
         <DispatchContext.Provider value={dispatch}>
           <NavigationContainer style={styles.container}>
             {loginState.userToken !== null ? (

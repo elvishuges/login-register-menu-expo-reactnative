@@ -9,4 +9,7 @@ export default {
     return api.post("/register", params);
   },
   //Projects
+  getAllProjects(params) {
+    return api.get("/project", params);
+  },
 };

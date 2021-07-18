@@ -1,12 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const authPrevState = {
+export const prevState = {
   isLoading: true,
   userToken: null,
 };
 
-const authReducer = (prevState, action) => {
-  console.log("reducer", action, prevState);
+const userReducer = (prevState, action) => {
   switch (action.type) {
     case "RETRIEVE_TOKEN":
       return {
@@ -29,4 +28,4 @@ const authReducer = (prevState, action) => {
   }
 };
 
-export default authReducer;
+export default userReducer;

@@ -16,13 +16,13 @@ import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-import AuthContext from "./../contexts/auth";
-import DispatchContext from "./../contexts/dispatch";
+import UserContext from "../contexts/user.context";
+import DispatchContext from "../contexts/dispatch.context";
 
 export function DrawerContent(props) {
   const paperTheme = useTheme();
 
-  const { logout } = React.useContext(AuthContext);
+  const { logout } = React.useContext(UserContext);
   const dispatch = React.useContext(DispatchContext);
 
   const handleLogout = async (e) => {
@@ -51,7 +51,7 @@ export function DrawerContent(props) {
           <Drawer.Section style={styles.drawerSection}>
             <DrawerItem
               icon={({ color, size }) => (
-                <Icon name="home-outline" color={color} size={size} />
+                <Icon name="desktop-mac-dashboard" color={color} size={size} />
               )}
               label="Dashboard"
               onPress={() => {
@@ -60,36 +60,27 @@ export function DrawerContent(props) {
             />
             <DrawerItem
               icon={({ color, size }) => (
-                <Icon name="account-outline" color={color} size={size} />
+                <Icon name="sitemap" color={color} size={size} />
               )}
-              label="Details"
+              label="Projetos"
               onPress={() => {
-                props.navigation.navigate("Projetos");
+                props.navigation.navigate("Projects");
               }}
             />
             <DrawerItem
               icon={({ color, size }) => (
-                <Icon name="bookmark-outline" color={color} size={size} />
+                <Icon name="account-group" color={color} size={size} />
               )}
-              label="Bookmarks"
+              label="Usuários"
               onPress={() => {
                 props.navigation.navigate("BookmarkScreen");
               }}
             />
             <DrawerItem
               icon={({ color, size }) => (
-                <Icon name="bookmark-outline" color={color} size={size} />
+                <Icon name="cog-refresh-outline" color={color} size={size} />
               )}
-              label="Settings"
-              onPress={() => {
-                props.navigation.navigate("SettingsScreen");
-              }}
-            />
-            <DrawerItem
-              icon={({ color, size }) => (
-                <Icon name="account-check-outline" color={color} size={size} />
-              )}
-              label="Support"
+              label="Minhas configurações"
               onPress={() => {
                 props.navigation.navigate("SupportScreen");
               }}
@@ -102,7 +93,7 @@ export function DrawerContent(props) {
           icon={({ color, size }) => (
             <Icon name="exit-to-app" color={color} size={size} />
           )}
-          label="Sign Out"
+          label="Sair"
           onPress={() => {
             handleLogout();
             props.navigation.closeDrawer();

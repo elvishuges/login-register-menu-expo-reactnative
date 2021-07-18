@@ -1,7 +1,21 @@
 import DesafioService from "../services/desafio.service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const authActions = {
+const userActions = {
+  getAllProjects: async () => {
+    const requestOptions = {
+      headers: {
+        Authorization: "Bearer " + (await AsyncStorage.getItem("userToken")),
+      },
+    };
+
+    try {
+      let rsp = await DesafioService.getAllProjects(requestOptions);
+      return rsp.data;
+    } catch (error) {
+      return "ERRO";
+    }
+  },
   login: async (dispatch, payload) => {
     console.log("payload");
     try {
@@ -12,7 +26,7 @@ const authActions = {
           type: "LOGIN",
           userToken: rsp.data.access_token, // pick the token
         });
-        return "SUCCESS";
+        return "Success";
       }
     } catch (error) {
       return "ERRO";
@@ -32,10 +46,9 @@ const authActions = {
         return "OK";
       })
       .catch((err) => {
-        console.log("Error", err);
         return "Error";
       });
   },
 };
 
-export default authActions;
+export default userActions;

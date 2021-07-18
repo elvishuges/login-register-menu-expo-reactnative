@@ -8,8 +8,8 @@ import * as Animatable from "react-native-animatable";
 
 import { LinearGradient } from "expo-linear-gradient";
 
-import AuthContext from "./../contexts/auth";
-import DispatchContext from "./../contexts/dispatch";
+import UserContext from "../contexts/user.context";
+import DispatchContext from "../contexts/dispatch.context";
 
 import Spinner from "react-native-loading-spinner-overlay";
 
@@ -35,7 +35,7 @@ export default function Login({ navigation }) {
     isValidPassword: true,
   });
 
-  const { login } = React.useContext(AuthContext);
+  const { login } = React.useContext(UserContext);
   const dispatch = React.useContext(DispatchContext);
 
   const handleLogin = async (email, password) => {

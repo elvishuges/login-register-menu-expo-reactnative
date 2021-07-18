@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Feather from "react-native-vector-icons/Feather";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
-import AuthContext from "./../contexts/auth";
+import UserContext from "../contexts/user.context";
 
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -34,7 +34,7 @@ export default function Login({ navigation }) {
     isValidPassword: true,
   });
 
-  const { register } = React.useContext(AuthContext);
+  const { register } = React.useContext(UserContext);
 
   const handleRegister = async (name, email, password) => {
     setData({
