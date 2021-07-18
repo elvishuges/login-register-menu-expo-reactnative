@@ -10,8 +10,6 @@ import {
 } from "react-native";
 import CardProject from "../components/CardProject";
 
-//import Card
-
 import UserContext from "../contexts/user.context";
 import DispatchContext from "../contexts/dispatch.context";
 
