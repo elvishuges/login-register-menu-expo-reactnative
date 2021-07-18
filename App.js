@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer, useMemo } from "react";
 
-import { StyleSheet } from "react-native";
+import { StyleSheet, StatusBar } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -76,6 +76,8 @@ export default function App(props) {
 
   return (
     <PaperProvider theme={theme}>
+      <StatusBar backgroundColor="#009387" barStyle="light-content" />
+
       <AuthContext.Provider value={userActions}>
         <DispatchContext.Provider value={dispatch}>
           <NavigationContainer style={styles.container}>

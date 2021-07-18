@@ -23,6 +23,7 @@ import {
   Platform,
   Alert,
 } from "react-native";
+import { set } from "react-native-reanimated";
 
 export default function Login({ navigation }) {
   const [data, setData] = React.useState({

@@ -2,7 +2,7 @@ import DesafioService from "../services/desafio.service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const userActions = {
-  getAllProjects: async () => {
+  getAllProjects: async (dispatch) => {
     const requestOptions = {
       headers: {
         Authorization: "Bearer " + (await AsyncStorage.getItem("userToken")),
@@ -13,11 +13,12 @@ const userActions = {
       let rsp = await DesafioService.getAllProjects(requestOptions);
       return rsp.data;
     } catch (error) {
-      return "ERRO";
+      await AsyncStorage.removeItem("userToken");
+      dispatch({ type: "LOGOUT" });
+      return [];
     }
   },
   login: async (dispatch, payload) => {
-    console.log("payload");
     try {
       let rsp = await DesafioService.login(payload);
       if (rsp.data.access_token) {
