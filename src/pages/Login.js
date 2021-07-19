@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { StatusBar } from "expo-status-bar";
 import Feather from "react-native-vector-icons/Feather";
@@ -9,6 +9,9 @@ import Spinner from "react-native-loading-spinner-overlay";
 
 import UserContext from "../contexts/user.context";
 import DispatchContext from "../contexts/dispatch.context";
+
+import { emailValidator } from "../helpers/emailValidator";
+import { passwordValidator } from "../helpers/passwordValidator";
 
 import {
   StyleSheet,
@@ -22,141 +25,85 @@ import {
 } from "react-native";
 
 export default function Login({ navigation }) {
-  const [data, setData] = React.useState({
-    spinner: false,
-    email: "",
-    password: "",
-    check_textInputChange: false,
-    secureTextEntry: true,
-    isValidUser: true,
-    isValidPassword: true,
-  });
+  const [email, setEmail] = useState({ value: "", error: "" });
+  const [password, setPassword] = useState({ value: "", error: "" });
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const [spinnerState, setSpinnerState] = useState(false);
 
   const { login } = React.useContext(UserContext);
   const dispatch = React.useContext(DispatchContext);
 
-  const handleLogin = async (email, password) => {
-    if (data.password.length <= 4) {
-      setData({
-        ...data,
-        isValidPassword: false,
-      });
+  const handleClickLogin = async () => {
+    const emailError = emailValidator(email.value);
+
+    const passwordError = passwordValidator(password.value);
+    if (emailError || passwordError) {
+      setEmail({ ...email, error: emailError });
+      setPassword({ ...password, error: passwordError });
+      return;
     }
-    if (data.email.length === 0) {
-      setData({
-        ...data,
-        isValidUser: false,
-      });
-    }
-    if (data.password.length >= 4 && data.email.length !== "") {
-      setData({
-        ...data,
-        spinner: true,
-      });
-      let payload = { email, password };
-      try {
-        let resp = await login(dispatch, payload);
-        if (resp === "ERRO") {
-          Alert.alert("Erro!", "Email ou senha incorretos", [{ text: "Ok" }]);
-        }
-      } catch (error) {
-        console.log("Catch Login", error);
-      } finally {
-        setData({
-          ...data,
-          spinner: false,
-        });
+
+    setSpinnerState(true);
+    let payload = { email: email.value, password: password.value };
+
+    try {
+      let resp = await login(dispatch, payload);
+      if (resp === "ERRO") {
+        Alert.alert("Erro!", "Email ou senha incorretos", [{ text: "Ok" }]);
       }
+    } catch (error) {
+      console.log("Catch Login", error);
+    } finally {
+      setSpinnerState(false);
     }
   };
 
   const updateSecureTextEntry = () => {
-    setData({
-      ...data,
-      secureTextEntry: !data.secureTextEntry,
-    });
-  };
-
-  const textInputChange = (val) => {
-    if (val.trim().length >= 4) {
-      setData({
-        ...data,
-        email: val,
-        check_textInputChange: true,
-        isValidUser: true,
-      });
-    } else {
-      setData({
-        ...data,
-        email: val,
-        check_textInputChange: false,
-        isValidUser: false,
-      });
-    }
-  };
-
-  const handlePasswordChange = (val) => {
-    if (val.trim().length >= 4) {
-      setData({
-        ...data,
-        password: val,
-        isValidPassword: true,
-      });
-    } else {
-      setData({
-        ...data,
-        password: val,
-        isValidPassword: false,
-      });
-    }
+    setSecureTextEntry(!secureTextEntry);
   };
 
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor="#009387" barStyle="light-content" />
       <View style={styles.image}>
         <Image source={require("./../../assets/login-right.png")} />
       </View>
+
       <Spinner
-        visible={data.spinner}
+        visible={spinnerState}
         textContent={"Logando..."}
         textStyle={styles.spinnerTextStyle}
       />
 
-      <Text style={[styles.text_footer]}>Email</Text>
+      <Text>Email</Text>
 
       <View style={styles.action}>
         <FontAwesome name="user-o" size={20} />
         <TextInput
-          returnKeyType="next"
-          error={true}
-          errorText="errr"
+          value={email.value}
           placeholder="E-mail"
           placeholderTextColor="#666666"
           style={[styles.textInput]}
-          onChangeText={(val) => textInputChange(val)}
+          onChangeText={(text) => setEmail({ value: text, error: "" })}
           autoCapitalize="none"
+          autoCompleteType="email"
+          textContentType="emailAddress"
+          keyboardType="email-address"
         />
-        {data.check_textInputChange ? (
+        {email.error ? null : (
           <Animatable.View animation="bounceIn">
             <Feather name="check-circle" color="green" size={20} />
           </Animatable.View>
-        ) : null}
+        )}
       </View>
-      {data.isValidUser ? null : (
+      {email.error ? (
         <Animatable.View animation="fadeInLeft" duration={500}>
-          <Text style={styles.errorMsg}>
-            campo deve ter mais de 4 caracteres.
-          </Text>
+          <Text style={styles.errorMsg}>{email.error}</Text>
         </Animatable.View>
-      )}
+      ) : null}
       <Text
-        style={[
-          styles.text_footer,
-          {
-            marginTop: 20,
-          },
-        ]}
+        style={{
+          marginTop: 5,
+        }}
       >
         Senha
       </Text>
@@ -165,29 +112,35 @@ export default function Login({ navigation }) {
         <TextInput
           placeholder="Senha"
           placeholderTextColor="#666666"
-          secureTextEntry={data.secureTextEntry ? true : false}
-          style={[styles.textInput, {}]}
-          autoCapitalize="none"
-          onChangeText={(val) => handlePasswordChange(val)}
+          secureTextEntry={secureTextEntry ? true : false}
+          style={styles.textInput}
+          label="Password"
+          returnKeyType="done"
+          value={password.value}
+          onChangeText={(text) => setPassword({ value: text, error: "" })}
+          error={!!password.error}
+          errorText={password.error}
         />
         <TouchableOpacity onPress={updateSecureTextEntry}>
-          {data.secureTextEntry ? (
+          {secureTextEntry ? (
             <Feather name="eye-off" color="grey" size={20} />
           ) : (
             <Feather name="eye" color="grey" size={20} />
           )}
         </TouchableOpacity>
       </View>
-      {data.isValidPassword ? null : (
+      {password.error ? (
         <Animatable.View animation="fadeInLeft" duration={500}>
-          <Text style={styles.errorMsg}>
-            campo deve ter mais de 4 caracteres.
-          </Text>
+          <Text style={styles.errorMsg}>{password.error}</Text>
         </Animatable.View>
-      )}
+      ) : null}
 
-      <TouchableOpacity>
-        <Text style={{ color: "#009387", marginTop: 15 }}>
+      <TouchableOpacity
+        onPress={() => {
+          console.log("Funcionalidade pendente");
+        }}
+      >
+        <Text style={{ color: "#009387", marginTop: 10 }}>
           Esqueceu a senha?
         </Text>
       </TouchableOpacity>
@@ -195,17 +148,15 @@ export default function Login({ navigation }) {
       <View style={styles.button}>
         <TouchableOpacity
           onPress={() => {
-            handleLogin(data.email, data.password);
+            handleClickLogin();
           }}
           style={styles.signIn}
         >
           <LinearGradient colors={["#08d4c4", "#01ab9d"]} style={styles.signIn}>
             <Text
-              style={[
-                {
-                  color: "#fff",
-                },
-              ]}
+              style={{
+                color: "#fff",
+              }}
             >
               Sign In
             </Text>
@@ -214,21 +165,12 @@ export default function Login({ navigation }) {
 
         <TouchableOpacity
           onPress={() => navigation.navigate("Register")}
-          style={[
-            styles.signIn,
-            {
-              borderColor: "#009387",
-              borderWidth: 1,
-              marginTop: 15,
-            },
-          ]}
+          style={styles.signUp}
         >
           <Text
-            style={[
-              {
-                color: "#009387",
-              },
-            ]}
+            style={{
+              color: "#009387",
+            }}
           >
             Sign Up
           </Text>
@@ -266,13 +208,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
   },
+  signUp: {
+    borderColor: "#009387",
+    borderWidth: 1,
+    marginTop: 15,
+    width: "100%",
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+  },
   errorMsg: {
     color: "red",
   },
 
   button: {
     alignItems: "center",
-    marginTop: 50,
+    marginTop: 20,
   },
   action: {
     flexDirection: "row",

@@ -105,7 +105,6 @@ export default function Login({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor="#009387" barStyle="light-content" />
       <Spinner
         visible={data.spinner}
         textContent={"Cadastrando..."}
@@ -187,13 +186,13 @@ export default function Login({ navigation }) {
       {data.isValidPassword ? null : (
         <Animatable.View animation="fadeInLeft" duration={500}>
           <Text style={styles.errorMsg}>
-            campo deve ter mais de 4 caracteres.
+            Campo deve ter mais de 4 caracteres.
           </Text>
         </Animatable.View>
       )}
 
       <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-        <Text style={{ color: "#009387", marginTop: 15 }}>
+        <Text style={{ color: "#009387", marginTop: 10 }}>
           Já possue cadastro?
         </Text>
       </TouchableOpacity>
@@ -254,7 +253,7 @@ const styles = StyleSheet.create({
 
   button: {
     alignItems: "center",
-    marginTop: 50,
+    marginTop: 20,
   },
   action: {
     flexDirection: "row",
