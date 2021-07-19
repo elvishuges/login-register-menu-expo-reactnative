@@ -71,9 +71,9 @@ export function DrawerContent(props) {
               icon={({ color, size }) => (
                 <Icon name="account-group" color={color} size={size} />
               )}
-              label="Usuários"
+              label="Desenvolvedores"
               onPress={() => {
-                props.navigation.navigate("BookmarkScreen");
+                props.navigation.navigate("Users");
               }}
             />
             <DrawerItem

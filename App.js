@@ -66,6 +66,7 @@ export default function App(props) {
     AsyncStorage.getItem("userToken").then((item) => {
       if (!isCancelled) {
         let userToken = item;
+        console.log("user token", userToken);
         dispatch({ type: "RETRIEVE_TOKEN", token: userToken });
       }
     });
@@ -77,7 +78,6 @@ export default function App(props) {
   return (
     <PaperProvider theme={theme}>
       <StatusBar backgroundColor="#009387" barStyle="light-content" />
-
       <AuthContext.Provider value={userActions}>
         <DispatchContext.Provider value={dispatch}>
           <NavigationContainer style={styles.container}>

@@ -18,6 +18,40 @@ const userActions = {
       return [];
     }
   },
+
+  getAllUsers: async (dispatch) => {
+    const requestOptions = {
+      headers: {
+        Authorization: "Bearer " + (await AsyncStorage.getItem("userToken")),
+      },
+    };
+
+    try {
+      let rsp = await DesafioService.getAllUsers(requestOptions);
+      return rsp.data;
+    } catch (error) {
+      await AsyncStorage.removeItem("userToken");
+      dispatch({ type: "LOGOUT" });
+      return [];
+    }
+  },
+
+  getAllHours: async (dispatch) => {
+    const requestOptions = {
+      headers: {
+        Authorization: "Bearer " + (await AsyncStorage.getItem("userToken")),
+      },
+    };
+
+    try {
+      let rsp = await DesafioService.getAllHours(requestOptions);
+      return rsp.data;
+    } catch (error) {
+      await AsyncStorage.removeItem("userToken");
+      dispatch({ type: "LOGOUT" });
+      return [];
+    }
+  },
   login: async (dispatch, payload) => {
     try {
       let rsp = await DesafioService.login(payload);

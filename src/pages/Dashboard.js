@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, Button, StyleSheet, ScrollView } from "react-native";
 import { Card } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
@@ -7,6 +7,12 @@ import ChartDonot from "../components/ChartDonot";
 import ChartBar from "../components/ChartBar";
 const Dashboard = ({ navigation }) => {
   const { colors } = useTheme();
+
+  useEffect(() => {
+    async function fetchAPI() {}
+
+    fetchAPI();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -45,8 +51,8 @@ const styles = StyleSheet.create({
     color: "#000",
   },
   cardChart: {
-    elevation: 5,
+    elevation: 0,
     borderRadius: 16,
-    backgroundColor: "#E3F7E0",
+    backgroundColor: "#eff3ff",
   },
 });

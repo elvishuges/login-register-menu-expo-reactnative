@@ -24,8 +24,10 @@ const Projects = ({ navigation }) => {
   useEffect(() => {
     async function fetchAPI() {
       let response = await getAllProjects(dispatch);
+
       const actives = response.filter((project) => project.active);
       const deactives = response.filter((project) => !project.active);
+
       setActiveProjects(actives);
       setDeactivateProjects(deactives);
       setLoadingProjects(false);
