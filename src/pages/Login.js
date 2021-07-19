@@ -1,17 +1,14 @@
-import { StatusBar } from "expo-status-bar";
-import React, { useState, useContext } from "react";
+import React from "react";
 
+import { StatusBar } from "expo-status-bar";
 import Feather from "react-native-vector-icons/Feather";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-
 import * as Animatable from "react-native-animatable";
-
 import { LinearGradient } from "expo-linear-gradient";
+import Spinner from "react-native-loading-spinner-overlay";
 
 import UserContext from "../contexts/user.context";
 import DispatchContext from "../contexts/dispatch.context";
-
-import Spinner from "react-native-loading-spinner-overlay";
 
 import {
   StyleSheet,
@@ -23,7 +20,6 @@ import {
   Platform,
   Alert,
 } from "react-native";
-import { set } from "react-native-reanimated";
 
 export default function Login({ navigation }) {
   const [data, setData] = React.useState({
@@ -132,6 +128,9 @@ export default function Login({ navigation }) {
       <View style={styles.action}>
         <FontAwesome name="user-o" size={20} />
         <TextInput
+          returnKeyType="next"
+          error={true}
+          errorText="errr"
           placeholder="E-mail"
           placeholderTextColor="#666666"
           style={[styles.textInput]}
@@ -203,7 +202,6 @@ export default function Login({ navigation }) {
           <LinearGradient colors={["#08d4c4", "#01ab9d"]} style={styles.signIn}>
             <Text
               style={[
-                styles.textSign,
                 {
                   color: "#fff",
                 },
@@ -227,7 +225,6 @@ export default function Login({ navigation }) {
         >
           <Text
             style={[
-              styles.textSign,
               {
                 color: "#009387",
               },

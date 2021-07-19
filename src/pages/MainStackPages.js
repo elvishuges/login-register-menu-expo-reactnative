@@ -2,7 +2,6 @@ import React from "react";
 
 import { createStackNavigator } from "@react-navigation/stack";
 
-import { View } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import Details from "./Details";
