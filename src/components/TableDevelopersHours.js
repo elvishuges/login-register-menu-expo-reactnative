@@ -1,11 +1,11 @@
 import * as React from "react";
-import { Text, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { DataTable } from "react-native-paper";
 
 const optionsPerPage = [0, 5, 10];
 
 const TableDevelopersHours = (props) => {
-  const { tableData } = props;
+  const { tableData, loadingData } = props;
   const [page, setPage] = React.useState(0);
   const [itemsPerPage, setItemsPerPage] = React.useState(optionsPerPage[0]);
 
@@ -29,6 +29,10 @@ const TableDevelopersHours = (props) => {
         <DataTable.Title>Estado</DataTable.Title>
       </DataTable.Header>
       <ScrollView>
+        <View style={styles.textLoading}>
+          {loadingData && <Text>Carregando...</Text>}
+        </View>
+
         {tableData.map((data, i) => {
           return (
             <DataTable.Row style={{ borderBottomWidth: 0 }} key={i}>
@@ -57,5 +61,12 @@ const TableDevelopersHours = (props) => {
     </DataTable>
   );
 };
+
+const styles = StyleSheet.create({
+  textLoading: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
 
 export default TableDevelopersHours;

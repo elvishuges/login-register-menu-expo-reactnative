@@ -3,14 +3,17 @@ import { Dimensions } from "react-native";
 
 import { BarChart } from "react-native-chart-kit";
 
-export default function ChartBar() {
+import { formatNumberToStringMonth } from "./../utils/functions";
+
+export default function ChartBar(props) {
+  const { dataset, labels } = props;
   return (
     <BarChart
       data={{
-        labels: ["January", "February", "March", "April"],
+        labels: labels,
         datasets: [
           {
-            data: [20, 45, 28, 80],
+            data: dataset,
           },
         ],
       }}
@@ -18,13 +21,15 @@ export default function ChartBar() {
       height={200}
       chartConfig={{
         backgroundColor: "#1cc910",
-        backgroundGradientFrom: "#eff3ff",
+        backgroundGradientFrom: "#AFCBC0",
         backgroundGradientTo: "#efefef",
-        decimalPlaces: 2,
+        decimalPlaces: 0,
         color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
         style: {
           borderRadius: 16,
         },
+        formatXLabel: (x) => formatNumberToStringMonth(x),
+        formatYLabel: (x) => `${x} hrs`,
       }}
       style={{
         marginVertical: 10,

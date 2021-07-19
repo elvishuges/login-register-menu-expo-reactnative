@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   titleProject: {
+    fontWeight: "bold",
     fontSize: 15,
     paddingHorizontal: 5,
   },

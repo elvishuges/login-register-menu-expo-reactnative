@@ -3,9 +3,7 @@ import React from "react";
 import { Dimensions } from "react-native";
 import { PieChart } from "react-native-chart-kit";
 
-import { Card } from "react-native-paper";
-
-export default function ChartDonot() {
+export default function ChartDonot(props) {
   const chartConfig = {
     backgroundGradientFrom: "#1E2923",
     backgroundGradientFromOpacity: 0,
@@ -47,7 +45,7 @@ export default function ChartDonot() {
       yLabelsOffset={50}
       accessor={"population"}
       backgroundColor={"transparent"}
-      paddingLeft={"15"}
+      paddingLeft={"25"}
     />
   );
 }
