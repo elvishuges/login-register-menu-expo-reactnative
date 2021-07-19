@@ -21,7 +21,7 @@ export default function ChartBar(props) {
       height={200}
       chartConfig={{
         backgroundColor: "#1cc910",
-        backgroundGradientFrom: "#AFCBC0",
+        backgroundGradientFrom: "#eff3ff",
         backgroundGradientTo: "#efefef",
         decimalPlaces: 0,
         color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,

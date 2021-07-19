@@ -28,8 +28,7 @@ export default function Login({ navigation }) {
     name: "",
     password: "",
     email: "",
-    check_textInputChange: false,
-    secureTextEntry: true,
+    securePasswordEntry: true,
     isValidUser: true,
     isValidPassword: true,
   });
@@ -44,15 +43,21 @@ export default function Login({ navigation }) {
     try {
       let payload = { email, password, name };
       let rsp = await register(payload);
-      if (rsp === "OK") {
-        Alert.alert("Sucesso!", "Usuário cadastrado com sucesso", [
-          { text: "Ok" },
-        ]);
+      if (rsp === 400) {
+        Alert.alert(
+          "Erro nos dados!",
+          "Verifique os dados ou tente com outro email;",
+          [{ text: "Ok" }]
+        );
         return;
       }
-      Alert.alert("Erro!", "Algo deu errado", [{ text: "Ok" }]);
+      Alert.alert("Sucesso!", "Usuário cadastrado com sucesso", [
+        { text: "Ok" },
+      ]);
     } catch (error) {
-      Alert.alert("Erro!", "Algo deu errado", [{ text: "Ok" }]);
+      Alert.alert("Erro!", "Algo deu errado, tente novamente mais tarde", [
+        { text: "Ok" },
+      ]);
     } finally {
       setData({
         ...data,
@@ -61,10 +66,10 @@ export default function Login({ navigation }) {
     }
   };
 
-  const updateSecureTextEntry = () => {
+  const updateSecurePasswordEntry = () => {
     setData({
       ...data,
-      secureTextEntry: !data.secureTextEntry,
+      securePasswordEntry: !data.securePasswordEntry,
     });
   };
 
@@ -123,6 +128,7 @@ export default function Login({ navigation }) {
         <FontAwesome name="user-o" size={20} />
         <TextInput
           placeholder="Nome"
+          value={data.name}
           placeholderTextColor="#666666"
           style={[styles.textInput]}
           autoCapitalize="none"
@@ -165,13 +171,13 @@ export default function Login({ navigation }) {
         <TextInput
           placeholder="Senha"
           placeholderTextColor="#666666"
-          secureTextEntry={data.secureTextEntry ? true : false}
+          securePasswordEntry={data.securePasswordEntry ? true : false}
           style={[styles.textInput, {}]}
           autoCapitalize="none"
           onChangeText={(val) => handlePasswordChange(val)}
         />
-        <TouchableOpacity onPress={updateSecureTextEntry}>
-          {data.secureTextEntry ? (
+        <TouchableOpacity onPress={updateSecurePasswordEntry}>
+          {data.securePasswordEntry ? (
             <Feather name="eye-off" color="grey" size={20} />
           ) : (
             <Feather name="eye" color="grey" size={20} />

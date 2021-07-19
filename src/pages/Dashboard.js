@@ -11,7 +11,7 @@ import ChartBar from "../components/ChartBar";
 
 const Dashboard = ({ navigation }) => {
   const { colors } = useTheme();
-  const [barChartLabels, setBarChartLabels] = useState([0, 0, 0]);
+  const [barChartLabels, setBarChartLabels] = useState(["01", "02", "03"]);
   const [barChartData, setBarChartData] = useState([0, 0, 0]);
 
   const dispatch = React.useContext(DispatchContext);
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     paddingTop: 15,
-    paddingHorizontal: 3,
+    paddingHorizontal: 5,
   },
   chartProjects: {
     paddingHorizontal: 5,
@@ -90,6 +90,6 @@ const styles = StyleSheet.create({
   cardChart: {
     elevation: 0,
     borderRadius: 16,
-    backgroundColor: "#AFCBC0",
+    backgroundColor: "#eff3ff",
   },
 });

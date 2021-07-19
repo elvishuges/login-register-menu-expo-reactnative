@@ -78,10 +78,11 @@ const userActions = {
   register: (payload) => {
     return DesafioService.register(payload)
       .then((rsp) => {
-        return "OK";
+        return "Success";
       })
       .catch((err) => {
-        return "Error";
+        console.log("err.response.status", err.response.status);
+        return err.response.status;
       });
   },
 };

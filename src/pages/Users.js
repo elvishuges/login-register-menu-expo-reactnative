@@ -54,7 +54,6 @@ export default function Users() {
         dataTableRows.push(tableElement);
       }
     });
-    console.log("result itens", dataTableRows);
 
     setTableData(dataTableRows);
   };

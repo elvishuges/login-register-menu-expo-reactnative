@@ -17,12 +17,14 @@ const MainStackScreen = ({ navigation }) => (
     <MainStack.Screen
       options={{
         title: "Dashboard",
+        headerTitleStyle: { color: "#fff" },
+        headerStyle: { backgroundColor: "#009387" },
         headerLeft: () => (
           <Icon.Button
             name="menu"
             size={30}
-            color="#000"
-            backgroundColor="white"
+            color="#fff"
+            backgroundColor="#009387"
             onPress={() => navigation.openDrawer()}
           ></Icon.Button>
         ),
@@ -34,12 +36,14 @@ const MainStackScreen = ({ navigation }) => (
     <MainStack.Screen
       options={{
         title: "Details",
+        headerTitleStyle: { color: "#fff" },
+        headerStyle: { backgroundColor: "#009387" },
         headerLeft: () => (
           <Icon.Button
             name="menu"
             size={30}
-            color="#000"
-            backgroundColor="white"
+            color="#fff"
+            backgroundColor="#009387"
             onPress={() => navigation.openDrawer()}
           ></Icon.Button>
         ),
@@ -51,12 +55,14 @@ const MainStackScreen = ({ navigation }) => (
     <MainStack.Screen
       options={{
         title: "Projetos",
+        headerTitleStyle: { color: "#fff" },
+        headerStyle: { backgroundColor: "#009387" },
         headerLeft: () => (
           <Icon.Button
             name="menu"
             size={30}
-            color="#000"
-            backgroundColor="white"
+            color="#fff"
+            backgroundColor="#009387"
             onPress={() => navigation.openDrawer()}
           ></Icon.Button>
         ),
@@ -68,12 +74,14 @@ const MainStackScreen = ({ navigation }) => (
     <MainStack.Screen
       options={{
         title: "Desenvolvedores",
+        headerTitleStyle: { color: "#fff" },
+        headerStyle: { backgroundColor: "#009387" },
         headerLeft: () => (
           <Icon.Button
             name="menu"
             size={30}
-            color="#000"
-            backgroundColor="white"
+            color="#fff"
+            backgroundColor="#009387"
             onPress={() => navigation.openDrawer()}
           ></Icon.Button>
         ),
