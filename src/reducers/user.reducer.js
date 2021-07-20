@@ -1,12 +1,12 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
 export const prevState = {
   isLoading: true,
   userToken: null,
-  erro: null,
+  erroLogin: null,
+  erroRegister: null,
 };
 
 const userReducer = (prevState, action) => {
+  console.log("prev state", prevState, action);
   switch (action.type) {
     case "RETRIEVE_TOKEN":
       return {
@@ -20,10 +20,15 @@ const userReducer = (prevState, action) => {
         userToken: action.token,
         isLoading: false,
       };
-    case "AUTH_ERRO":
+    case "AUTH_LOGIN_ERRO":
       return {
         ...prevState,
-        erro: action.erro,
+        erroLogin: action.erro,
+      };
+    case "AUTH_REGISTER_ERRO":
+      return {
+        ...prevState,
+        erroRegister: action.erro,
       };
     case "LOGOUT":
       return {

@@ -64,7 +64,10 @@ const userActions = {
         return "OK";
       }
     } catch (error) {
-      dispatch({ type: "AUTH_ERRO", erro: "Usuário ou senha incorretos" });
+      dispatch({
+        type: "AUTH_LOGIN_ERRO",
+        erro: "Usuário ou senha incorretos",
+      });
       return "ERRO";
     }
   },
@@ -83,7 +86,7 @@ const userActions = {
       })
       .catch((err) => {
         dispatch({
-          type: "AUTH_ERRO",
+          type: "AUTH_REGISTER_ERRO",
           erro: "Dados invalidos ou email já existe",
         });
         return "ERRO";

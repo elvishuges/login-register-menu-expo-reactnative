@@ -1,4 +1,6 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
+
+import { useIsFocused } from "@react-navigation/native";
 
 import Feather from "react-native-vector-icons/Feather";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -26,7 +28,9 @@ import {
   Alert,
 } from "react-native";
 
-export default function Register({ navigation }) {
+export default function Register(props) {
+  const isFocused = useIsFocused();
+
   const [name, setName] = useState({ value: "", error: "" });
   const [email, setEmail] = useState({ value: "", error: "" });
   const [password, setPassword] = useState({ value: "", error: "" });
@@ -35,7 +39,7 @@ export default function Register({ navigation }) {
   const [spinnerState, setSpinnerState] = useState(false);
 
   const dispatch = React.useContext(DispatchContext);
-  const { erro } = useContext(UserContext);
+  const { erroRegister } = useContext(UserContext);
 
   const handleRegisterClick = async () => {
     const nameError = nameValidator(name.value);
@@ -50,6 +54,7 @@ export default function Register({ navigation }) {
       return;
     }
 
+    dispatch({ type: "AUTH_REGISTER_ERRO", erro: null });
     setSpinnerState(true);
 
     let payload = {
@@ -61,17 +66,27 @@ export default function Register({ navigation }) {
     try {
       let resp = await userActions.register(dispatch, payload);
       if (resp === "OK") {
-        Alert.alert("Sucesso!", "Usuário cadastrado com sucesso", [
-          { text: "Ok" },
+        Alert.alert("Sucesso!", "Usuário cadastrado com sucesso.", [
+          { text: "Okay" },
         ]);
-        return;
       }
-      Alert.alert("Erro!", erro, [{ text: "Ok" }]);
     } catch (error) {
     } finally {
       setSpinnerState(false);
     }
   };
+
+  useEffect(() => {
+    // Call only when screen open or when back on screen
+    if (isFocused) {
+      return () => {
+        dispatch({ type: "AUTH_REGISTER_ERRO", erro: null });
+        setName({ ...name, value: "", error: "" });
+        setEmail({ ...email, value: "", error: "" });
+        setPassword({ ...password, value: "", error: "" });
+      };
+    }
+  }, [props, isFocused]);
 
   const updateSecureTextEntry = () => {
     setSecureTextEntry(!secureTextEntry);
@@ -88,6 +103,11 @@ export default function Register({ navigation }) {
         textContent={"Logando..."}
         textStyle={styles.spinnerTextStyle}
       />
+      {erroRegister ? (
+        <View style={styles.erroTextResponse}>
+          <Text>{erroRegister}</Text>
+        </View>
+      ) : null}
       <Text>Nome</Text>
 
       <View style={styles.action}>
@@ -175,7 +195,7 @@ export default function Register({ navigation }) {
 
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("Login");
+          props.navigation.navigate("Login");
         }}
       >
         <Text style={{ color: "#009387", marginTop: 10 }}>
@@ -217,7 +237,7 @@ const styles = StyleSheet.create({
   },
   image: {
     alignItems: "center",
-    paddingTop: 30,
+    paddingTop: 10,
   },
   textInput: {
     flex: 1,
@@ -248,5 +268,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#f2f2f2",
     paddingBottom: 5,
+  },
+  erroTextResponse: {
+    alignItems: "center",
   },
 });
