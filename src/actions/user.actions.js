@@ -61,9 +61,10 @@ const userActions = {
           type: "LOGIN",
           userToken: rsp.data.access_token, // pick the token
         });
-        return "Success";
+        return "OK";
       }
     } catch (error) {
+      dispatch({ type: "AUTH_ERRO", erro: "Usuário ou senha incorretos" });
       return "ERRO";
     }
   },
@@ -75,14 +76,17 @@ const userActions = {
       console.log(e);
     }
   },
-  register: (payload) => {
+  register: (dispatch, payload) => {
     return DesafioService.register(payload)
       .then((rsp) => {
-        return "Success";
+        return "OK";
       })
       .catch((err) => {
-        console.log("err.response.status", err.response.status);
-        return err.response.status;
+        dispatch({
+          type: "AUTH_ERRO",
+          erro: "Dados invalidos ou email já existe",
+        });
+        return "ERRO";
       });
   },
 };

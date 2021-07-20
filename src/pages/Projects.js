@@ -10,7 +10,8 @@ import {
 } from "react-native";
 import CardProject from "../components/CardProject";
 
-import UserContext from "../contexts/user.context";
+import userActions from "./../actions/user.actions";
+
 import DispatchContext from "../contexts/dispatch.context";
 
 const Projects = ({ navigation }) => {
@@ -19,11 +20,10 @@ const Projects = ({ navigation }) => {
   const [loadingProjects, setLoadingProjects] = useState(true);
 
   const dispatch = React.useContext(DispatchContext);
-  const { getAllProjects } = React.useContext(UserContext);
 
   useEffect(() => {
     async function fetchAPI() {
-      let response = await getAllProjects(dispatch);
+      let response = await userActions.getAllProjects(dispatch);
 
       const actives = response.filter((project) => project.active);
       const deactives = response.filter((project) => !project.active);

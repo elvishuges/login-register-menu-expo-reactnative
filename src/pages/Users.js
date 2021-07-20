@@ -7,13 +7,14 @@ import {
   ScrollView,
   Dimensions,
 } from "react-native";
-const { width } = Dimensions.get("window");
 
-import UserContext from "../contexts/user.context";
+import userActions from "./../actions/user.actions";
 import DispatchContext from "../contexts/dispatch.context";
 
 import DeveloperCardProfile from "../components/DeveloperCardProfile";
 import TableDevelopersHours from "../components/TableDevelopersHours";
+
+const { width } = Dimensions.get("window");
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -21,14 +22,12 @@ export default function Users() {
   const [loadingData, setLoadingData] = useState(true);
 
   const dispatch = React.useContext(DispatchContext);
-  const { getAllUsers, getAllHours, getAllProjects } =
-    React.useContext(UserContext);
 
   useEffect(() => {
     async function fetchAPI() {
-      let responseUsers = await getAllUsers(dispatch);
-      let responseHours = await getAllHours(dispatch);
-      let responseProjects = await getAllProjects(dispatch);
+      let responseUsers = await userActions.getAllUsers(dispatch);
+      let responseHours = await userActions.getAllHours(dispatch);
+      let responseProjects = await userActions.getAllProjects(dispatch);
 
       formatDataTableRows(responseHours, responseUsers, responseProjects);
       setLoadingData(false);

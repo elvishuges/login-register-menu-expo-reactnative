@@ -1,15 +1,19 @@
-import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 
 import Feather from "react-native-vector-icons/Feather";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import * as Animatable from "react-native-animatable";
+import { LinearGradient } from "expo-linear-gradient";
+import Spinner from "react-native-loading-spinner-overlay";
 
+import DispatchContext from "../contexts/dispatch.context";
 import UserContext from "../contexts/user.context";
 
-import { LinearGradient } from "expo-linear-gradient";
+import userActions from "./../actions/user.actions";
 
-import Spinner from "react-native-loading-spinner-overlay";
-import * as Animatable from "react-native-animatable";
+import { emailValidator } from "../helpers/emailValidator";
+import { passwordValidator } from "../helpers/passwordValidator";
+import { nameValidator } from "../helpers/nameValidator";
 
 import {
   StyleSheet,
@@ -22,146 +26,122 @@ import {
   Alert,
 } from "react-native";
 
-export default function Login({ navigation }) {
-  const [data, setData] = React.useState({
-    spinner: false,
-    name: "",
-    password: "",
-    email: "",
-    securePasswordEntry: true,
-    isValidUser: true,
-    isValidPassword: true,
-  });
+export default function Register({ navigation }) {
+  const [name, setName] = useState({ value: "", error: "" });
+  const [email, setEmail] = useState({ value: "", error: "" });
+  const [password, setPassword] = useState({ value: "", error: "" });
 
-  const { register } = React.useContext(UserContext);
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const [spinnerState, setSpinnerState] = useState(false);
 
-  const handleRegister = async (name, email, password) => {
-    setData({
-      ...data,
-      spinner: true,
-    });
+  const dispatch = React.useContext(DispatchContext);
+  const { erro } = useContext(UserContext);
+
+  const handleRegisterClick = async () => {
+    const nameError = nameValidator(name.value);
+    const emailError = emailValidator(email.value);
+    const passwordError = passwordValidator(password.value);
+
+    setName({ ...name, error: nameError });
+    setEmail({ ...email, error: emailError });
+    setPassword({ ...password, error: passwordError });
+
+    if (emailError || passwordError || nameError) {
+      return;
+    }
+
+    setSpinnerState(true);
+
+    let payload = {
+      name: name.value,
+      email: email.value,
+      password: password.value,
+    };
+
     try {
-      let payload = { email, password, name };
-      let rsp = await register(payload);
-      if (rsp === 400) {
-        Alert.alert(
-          "Erro nos dados!",
-          "Verifique os dados ou tente com outro email;",
-          [{ text: "Ok" }]
-        );
+      let resp = await userActions.register(dispatch, payload);
+      if (resp === "OK") {
+        Alert.alert("Sucesso!", "Usuário cadastrado com sucesso", [
+          { text: "Ok" },
+        ]);
         return;
       }
-      Alert.alert("Sucesso!", "Usuário cadastrado com sucesso", [
-        { text: "Ok" },
-      ]);
+      Alert.alert("Erro!", erro, [{ text: "Ok" }]);
     } catch (error) {
-      Alert.alert("Erro!", "Algo deu errado, tente novamente mais tarde", [
-        { text: "Ok" },
-      ]);
     } finally {
-      setData({
-        ...data,
-        spinner: false,
-      });
+      setSpinnerState(false);
     }
   };
 
-  const updateSecurePasswordEntry = () => {
-    setData({
-      ...data,
-      securePasswordEntry: !data.securePasswordEntry,
-    });
-  };
-
-  const handleNameChange = (val) => {
-    setData({
-      ...data,
-      name: val,
-    });
-  };
-
-  const handleEmailChange = (val) => {
-    setData({
-      ...data,
-      email: val,
-    });
-  };
-
-  const handlePasswordChange = (val) => {
-    if (val.trim().length >= 4) {
-      setData({
-        ...data,
-        password: val,
-        isValidPassword: true,
-      });
-    } else {
-      setData({
-        ...data,
-        password: val,
-        isValidPassword: false,
-      });
-    }
+  const updateSecureTextEntry = () => {
+    setSecureTextEntry(!secureTextEntry);
   };
 
   return (
     <View style={styles.container}>
-      <Spinner
-        visible={data.spinner}
-        textContent={"Cadastrando..."}
-        textStyle={styles.spinnerTextStyle}
-      />
       <View style={styles.image}>
         <Image source={require("./../../assets/login-right.png")} />
       </View>
-      <Text
-        style={[
-          styles.text_footer,
-          {
-            marginTop: 10,
-          },
-        ]}
-      >
-        Nome
-      </Text>
-      <View style={styles.action}>
-        <FontAwesome name="user-o" size={20} />
-        <TextInput
-          placeholder="Nome"
-          value={data.name}
-          placeholderTextColor="#666666"
-          style={[styles.textInput]}
-          autoCapitalize="none"
-          onChangeText={(val) => handleNameChange(val)}
-        />
-      </View>
-      <Text
-        style={[
-          styles.text_footer,
-          {
-            marginTop: 5,
-          },
-        ]}
-      >
-        E-mail
-      </Text>
-      <View style={styles.action}>
-        <FontAwesome name="user-o" size={20} />
-        <TextInput
-          placeholder="e-mail"
-          placeholderTextColor="#666666"
-          style={[styles.textInput]}
-          autoCapitalize="none"
-          onChangeText={(val) => handleEmailChange(val)}
-        />
-      </View>
 
+      <Spinner
+        visible={spinnerState}
+        textContent={"Logando..."}
+        textStyle={styles.spinnerTextStyle}
+      />
+      <Text>Nome</Text>
+
+      <View style={styles.action}>
+        <FontAwesome name="user-o" size={20} />
+        <TextInput
+          value={email.name}
+          placeholder="Nome"
+          placeholderTextColor="#666666"
+          style={[styles.textInput]}
+          onChangeText={(text) => setName({ value: text, error: "" })}
+          autoCapitalize="none"
+        />
+        {name.error ? null : (
+          <Animatable.View animation="bounceIn">
+            <Feather name="check-circle" color="green" size={20} />
+          </Animatable.View>
+        )}
+      </View>
+      {name.error ? (
+        <Animatable.View animation="fadeInLeft" duration={500}>
+          <Text style={styles.errorMsg}>{name.error}</Text>
+        </Animatable.View>
+      ) : null}
+
+      <Text>Email</Text>
+
+      <View style={styles.action}>
+        <FontAwesome name="user-o" size={20} />
+        <TextInput
+          value={email.value}
+          placeholder="E-mail"
+          placeholderTextColor="#666666"
+          style={[styles.textInput]}
+          onChangeText={(text) => setEmail({ value: text, error: "" })}
+          autoCapitalize="none"
+          autoCompleteType="email"
+          textContentType="emailAddress"
+          keyboardType="email-address"
+        />
+        {email.error ? null : (
+          <Animatable.View animation="bounceIn">
+            <Feather name="check-circle" color="green" size={20} />
+          </Animatable.View>
+        )}
+      </View>
+      {email.error ? (
+        <Animatable.View animation="fadeInLeft" duration={500}>
+          <Text style={styles.errorMsg}>{email.error}</Text>
+        </Animatable.View>
+      ) : null}
       <Text
-        style={[
-          styles.text_footer,
-          {
-            marginTop: 10,
-          },
-        ]}
+        style={{
+          marginTop: 5,
+        }}
       >
         Senha
       </Text>
@@ -170,48 +150,51 @@ export default function Login({ navigation }) {
         <TextInput
           placeholder="Senha"
           placeholderTextColor="#666666"
-          securePasswordEntry={data.securePasswordEntry ? true : false}
-          style={[styles.textInput, {}]}
-          autoCapitalize="none"
-          onChangeText={(val) => handlePasswordChange(val)}
+          secureTextEntry={secureTextEntry ? true : false}
+          style={styles.textInput}
+          label="Password"
+          returnKeyType="done"
+          value={password.value}
+          onChangeText={(text) => setPassword({ value: text, error: "" })}
+          error={!!password.error}
+          errorText={password.error}
         />
-        <TouchableOpacity onPress={updateSecurePasswordEntry}>
-          {data.securePasswordEntry ? (
+        <TouchableOpacity onPress={updateSecureTextEntry}>
+          {secureTextEntry ? (
             <Feather name="eye-off" color="grey" size={20} />
           ) : (
             <Feather name="eye" color="grey" size={20} />
           )}
         </TouchableOpacity>
       </View>
-      {data.isValidPassword ? null : (
+      {password.error ? (
         <Animatable.View animation="fadeInLeft" duration={500}>
-          <Text style={styles.errorMsg}>
-            Campo deve ter mais de 4 caracteres.
-          </Text>
+          <Text style={styles.errorMsg}>{password.error}</Text>
         </Animatable.View>
-      )}
+      ) : null}
 
-      <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("Login");
+        }}
+      >
         <Text style={{ color: "#009387", marginTop: 10 }}>
-          Já possue cadastro?
+          Já possue cadastro ?
         </Text>
       </TouchableOpacity>
 
       <View style={styles.button}>
         <TouchableOpacity
           onPress={() => {
-            handleRegister(data.name, data.email, data.password);
+            handleRegisterClick();
           }}
-          style={styles.signIn}
+          style={styles.signUp}
         >
-          <LinearGradient colors={["#08d4c4", "#01ab9d"]} style={styles.signIn}>
+          <LinearGradient colors={["#08d4c4", "#01ab9d"]} style={styles.signUp}>
             <Text
-              style={[
-                styles.textSign,
-                {
-                  color: "#fff",
-                },
-              ]}
+              style={{
+                color: "#fff",
+              }}
             >
               Sign Up
             </Text>
@@ -223,18 +206,18 @@ export default function Login({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    paddingTop: 20,
-    padding: 10,
-  },
   spinnerTextStyle: {
     color: "#FFF",
   },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    paddingTop: 0,
+    padding: 10,
+  },
   image: {
     alignItems: "center",
-    paddingTop: 10,
+    paddingTop: 30,
   },
   textInput: {
     flex: 1,
@@ -243,12 +226,16 @@ const styles = StyleSheet.create({
     color: "#05375a",
   },
 
-  signIn: {
+  signUp: {
     width: "100%",
     height: 50,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
+  },
+
+  errorMsg: {
+    color: "red",
   },
 
   button: {

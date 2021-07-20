@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, StyleSheet } from "react-native";
 import { useTheme, Avatar, Title, Caption, Drawer } from "react-native-paper";
 
@@ -6,17 +6,16 @@ import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-import UserContext from "../contexts/user.context";
+import userActions from "./../actions/user.actions";
 import DispatchContext from "../contexts/dispatch.context";
 
 export function DrawerContent(props) {
   const paperTheme = useTheme();
 
-  const { logout } = React.useContext(UserContext);
-  const dispatch = React.useContext(DispatchContext);
+  const dispatch = useContext(DispatchContext);
 
   const handleLogout = async (e) => {
-    logout(dispatch);
+    userActions.logout(dispatch);
   };
 
   return (

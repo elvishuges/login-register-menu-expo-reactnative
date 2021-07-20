@@ -6,25 +6,25 @@ import { Provider as PaperProvider } from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
 import { CustomDefaultTheme, CustomDarkTheme } from "./src/core/theme";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-const Drawer = createDrawerNavigator();
 import { DrawerContent } from "./src/components/DrawerContent";
-import userActions from "./src/actions/user.actions";
 
 import RootStackPages from "./src/pages/RootStackPages";
 import MainStackPages from "./src/pages/MainStackPages";
 
-import authReducer from "./src/reducers/user.reducer";
+import userReduver from "./src/reducers/user.reducer";
 import { prevState } from "./src/reducers/user.reducer";
 
-import AuthContext from "./src/contexts/user.context";
+import UserContext from "./src/contexts/user.context";
 import DispatchContext from "./src/contexts/dispatch.context";
+
+const Drawer = createDrawerNavigator();
 
 export default function App(props) {
   const [isDarkTheme] = React.useState(false);
 
   const theme = isDarkTheme ? CustomDarkTheme : CustomDefaultTheme;
 
-  const [loginState, dispatch] = useReducer(authReducer, prevState);
+  const [userState, dispatch] = useReducer(userReduver, prevState);
 
   useEffect(() => {
     let isCancelled = false;
@@ -46,10 +46,10 @@ export default function App(props) {
         backgroundColor={theme.colors.primary}
         barStyle="light-content"
       />
-      <AuthContext.Provider value={userActions}>
+      <UserContext.Provider value={userState}>
         <DispatchContext.Provider value={dispatch}>
           <NavigationContainer style={styles.container}>
-            {loginState.userToken !== null ? (
+            {userState.userToken !== null ? (
               <Drawer.Navigator
                 drawerContent={(props) => <DrawerContent {...props} />}
               >
@@ -60,7 +60,7 @@ export default function App(props) {
             )}
           </NavigationContainer>
         </DispatchContext.Provider>
-      </AuthContext.Provider>
+      </UserContext.Provider>
     </PaperProvider>
   );
 }

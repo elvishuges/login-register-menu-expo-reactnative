@@ -1,14 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 
-import { StatusBar } from "expo-status-bar";
+import {
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Button,
+  Keyboard,
+} from "react-native";
+
 import Feather from "react-native-vector-icons/Feather";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import * as Animatable from "react-native-animatable";
 import { LinearGradient } from "expo-linear-gradient";
 import Spinner from "react-native-loading-spinner-overlay";
 
-import UserContext from "../contexts/user.context";
 import DispatchContext from "../contexts/dispatch.context";
+import UserContext from "../contexts/user.context";
+
+import userActions from "./../actions/user.actions";
 
 import { emailValidator } from "../helpers/emailValidator";
 import { passwordValidator } from "../helpers/passwordValidator";
@@ -30,8 +38,8 @@ export default function Login({ navigation }) {
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [spinnerState, setSpinnerState] = useState(false);
 
-  const { login } = React.useContext(UserContext);
   const dispatch = React.useContext(DispatchContext);
+  const { erro } = useContext(UserContext);
 
   const handleClickLogin = async () => {
     const emailError = emailValidator(email.value);
@@ -47,12 +55,11 @@ export default function Login({ navigation }) {
     let payload = { email: email.value, password: password.value };
 
     try {
-      let resp = await login(dispatch, payload);
-      if (resp === "ERRO") {
-        Alert.alert("Erro!", "Email ou senha incorretos", [{ text: "Ok" }]);
+      let resp = await userActions.login(dispatch, payload);
+      if (respo == "ERRO") {
+        Alert.alert("Erro!", erro, [{ text: "Ok" }]);
       }
     } catch (error) {
-      console.log("Catch Login", error);
     } finally {
       setSpinnerState(false);
     }

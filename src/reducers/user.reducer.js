@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export const prevState = {
   isLoading: true,
   userToken: null,
+  erro: null,
 };
 
 const userReducer = (prevState, action) => {
@@ -16,8 +17,13 @@ const userReducer = (prevState, action) => {
     case "LOGIN":
       return {
         ...prevState,
-        userToken: "action.token",
+        userToken: action.token,
         isLoading: false,
+      };
+    case "AUTH_ERRO":
+      return {
+        ...prevState,
+        erro: action.erro,
       };
     case "LOGOUT":
       return {

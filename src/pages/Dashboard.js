@@ -3,6 +3,8 @@ import { View, Text, Button, StyleSheet, ScrollView } from "react-native";
 import { Card } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
 
+import userActions from "./../actions/user.actions";
+
 import UserContext from "../contexts/user.context";
 import DispatchContext from "../contexts/dispatch.context";
 
@@ -20,7 +22,7 @@ const Dashboard = ({ navigation }) => {
 
   useEffect(() => {
     async function fetchAPI() {
-      let responseHours = await getAllHours(dispatch);
+      let responseHours = await userActions.getAllHours(dispatch);
       foramtBarChartData(responseHours);
     }
 
