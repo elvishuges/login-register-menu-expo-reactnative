@@ -6,7 +6,6 @@ export const prevState = {
 };
 
 const userReducer = (prevState, action) => {
-  console.log("prev state", prevState, action);
   switch (action.type) {
     case "RETRIEVE_TOKEN":
       return {

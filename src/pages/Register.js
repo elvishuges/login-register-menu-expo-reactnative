@@ -24,12 +24,16 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
-  Platform,
+  ScrollView,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 
 export default function Register(props) {
   const isFocused = useIsFocused();
+
+  const keyboardVerticalOffset = Platform.OS === "ios" ? 40 : 25;
 
   const [name, setName] = useState({ value: "", error: "" });
   const [email, setEmail] = useState({ value: "", error: "" });
@@ -93,135 +97,148 @@ export default function Register(props) {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.image}>
-        <Image source={require("./../../assets/login-right.png")} />
-      </View>
+    <KeyboardAvoidingView
+      behavior="height"
+      backgroundColor="#fff"
+      keyboardVerticalOffset={keyboardVerticalOffset}
+      style={{ flex: 1 }}
+    >
+      <ScrollView>
+        <View style={styles.container}>
+          <View style={styles.image}>
+            <Image source={require("./../../assets/login-right.png")} />
+          </View>
 
-      <Spinner
-        visible={spinnerState}
-        textContent={"Logando..."}
-        textStyle={styles.spinnerTextStyle}
-      />
-      {erroRegister ? (
-        <View style={styles.erroTextResponse}>
-          <Text>{erroRegister}</Text>
-        </View>
-      ) : null}
-      <Text>Nome</Text>
+          <Spinner
+            visible={spinnerState}
+            textContent={"Logando..."}
+            textStyle={styles.spinnerTextStyle}
+          />
+          {erroRegister ? (
+            <View style={styles.erroTextResponse}>
+              <Text>{erroRegister}</Text>
+            </View>
+          ) : null}
+          <Text>Nome</Text>
 
-      <View style={styles.action}>
-        <FontAwesome name="user-o" size={20} />
-        <TextInput
-          value={email.name}
-          placeholder="Nome"
-          placeholderTextColor="#666666"
-          style={[styles.textInput]}
-          onChangeText={(text) => setName({ value: text, error: "" })}
-          autoCapitalize="none"
-        />
-        {name.error ? null : (
-          <Animatable.View animation="bounceIn">
-            <Feather name="check-circle" color="green" size={20} />
-          </Animatable.View>
-        )}
-      </View>
-      {name.error ? (
-        <Animatable.View animation="fadeInLeft" duration={500}>
-          <Text style={styles.errorMsg}>{name.error}</Text>
-        </Animatable.View>
-      ) : null}
+          <View style={styles.action}>
+            <FontAwesome name="user-o" size={20} />
+            <TextInput
+              value={email.name}
+              placeholder="Nome"
+              placeholderTextColor="#666666"
+              style={[styles.textInput]}
+              onChangeText={(text) => setName({ value: text, error: "" })}
+              autoCapitalize="none"
+            />
+            {name.error ? null : (
+              <Animatable.View animation="bounceIn">
+                <Feather name="check-circle" color="green" size={20} />
+              </Animatable.View>
+            )}
+          </View>
+          {name.error ? (
+            <Animatable.View animation="fadeInLeft" duration={500}>
+              <Text style={styles.errorMsg}>{name.error}</Text>
+            </Animatable.View>
+          ) : null}
 
-      <Text>Email</Text>
+          <Text>Email</Text>
 
-      <View style={styles.action}>
-        <FontAwesome name="user-o" size={20} />
-        <TextInput
-          value={email.value}
-          placeholder="E-mail"
-          placeholderTextColor="#666666"
-          style={[styles.textInput]}
-          onChangeText={(text) => setEmail({ value: text, error: "" })}
-          autoCapitalize="none"
-          autoCompleteType="email"
-          textContentType="emailAddress"
-          keyboardType="email-address"
-        />
-        {email.error ? null : (
-          <Animatable.View animation="bounceIn">
-            <Feather name="check-circle" color="green" size={20} />
-          </Animatable.View>
-        )}
-      </View>
-      {email.error ? (
-        <Animatable.View animation="fadeInLeft" duration={500}>
-          <Text style={styles.errorMsg}>{email.error}</Text>
-        </Animatable.View>
-      ) : null}
-      <Text
-        style={{
-          marginTop: 5,
-        }}
-      >
-        Senha
-      </Text>
-      <View style={styles.action}>
-        <Feather name="lock" size={20} />
-        <TextInput
-          placeholder="Senha"
-          placeholderTextColor="#666666"
-          secureTextEntry={secureTextEntry ? true : false}
-          style={styles.textInput}
-          label="Password"
-          returnKeyType="done"
-          value={password.value}
-          onChangeText={(text) => setPassword({ value: text, error: "" })}
-          error={!!password.error}
-          errorText={password.error}
-        />
-        <TouchableOpacity onPress={updateSecureTextEntry}>
-          {secureTextEntry ? (
-            <Feather name="eye-off" color="grey" size={20} />
-          ) : (
-            <Feather name="eye" color="grey" size={20} />
-          )}
-        </TouchableOpacity>
-      </View>
-      {password.error ? (
-        <Animatable.View animation="fadeInLeft" duration={500}>
-          <Text style={styles.errorMsg}>{password.error}</Text>
-        </Animatable.View>
-      ) : null}
+          <View style={styles.action}>
+            <FontAwesome name="user-o" size={20} />
+            <TextInput
+              value={email.value}
+              placeholder="E-mail"
+              placeholderTextColor="#666666"
+              style={[styles.textInput]}
+              onChangeText={(text) => setEmail({ value: text, error: "" })}
+              autoCapitalize="none"
+              autoCompleteType="email"
+              textContentType="emailAddress"
+              keyboardType="email-address"
+            />
+            {email.error ? null : (
+              <Animatable.View animation="bounceIn">
+                <Feather name="check-circle" color="green" size={20} />
+              </Animatable.View>
+            )}
+          </View>
+          {email.error ? (
+            <Animatable.View animation="fadeInLeft" duration={500}>
+              <Text style={styles.errorMsg}>{email.error}</Text>
+            </Animatable.View>
+          ) : null}
+          <Text
+            style={{
+              marginTop: 5,
+            }}
+          >
+            Senha
+          </Text>
+          <View style={styles.action}>
+            <Feather name="lock" size={20} />
+            <TextInput
+              placeholder="Senha"
+              style={styles.input}
+              placeholderTextColor="#666666"
+              secureTextEntry={secureTextEntry ? true : false}
+              style={styles.textInput}
+              label="Password"
+              returnKeyType="done"
+              value={password.value}
+              onChangeText={(text) => setPassword({ value: text, error: "" })}
+              error={!!password.error}
+              errorText={password.error}
+            />
+            <TouchableOpacity onPress={updateSecureTextEntry}>
+              {secureTextEntry ? (
+                <Feather name="eye-off" color="grey" size={20} />
+              ) : (
+                <Feather name="eye" color="grey" size={20} />
+              )}
+            </TouchableOpacity>
+          </View>
+          {password.error ? (
+            <Animatable.View animation="fadeInLeft" duration={500}>
+              <Text style={styles.errorMsg}>{password.error}</Text>
+            </Animatable.View>
+          ) : null}
 
-      <TouchableOpacity
-        onPress={() => {
-          props.navigation.navigate("Login");
-        }}
-      >
-        <Text style={{ color: "#009387", marginTop: 10 }}>
-          Já possue cadastro ?
-        </Text>
-      </TouchableOpacity>
-
-      <View style={styles.button}>
-        <TouchableOpacity
-          onPress={() => {
-            handleRegisterClick();
-          }}
-          style={styles.signUp}
-        >
-          <LinearGradient colors={["#08d4c4", "#01ab9d"]} style={styles.signUp}>
-            <Text
-              style={{
-                color: "#fff",
-              }}
-            >
-              Sign Up
+          <TouchableOpacity
+            onPress={() => {
+              props.navigation.navigate("Login");
+            }}
+          >
+            <Text style={{ color: "#009387", marginTop: 10 }}>
+              Já possue cadastro ?
             </Text>
-          </LinearGradient>
-        </TouchableOpacity>
-      </View>
-    </View>
+          </TouchableOpacity>
+
+          <View style={styles.button}>
+            <TouchableOpacity
+              onPress={() => {
+                handleRegisterClick();
+              }}
+              style={styles.signUp}
+            >
+              <LinearGradient
+                colors={["#08d4c4", "#01ab9d"]}
+                style={styles.signUp}
+              >
+                <Text
+                  style={{
+                    color: "#fff",
+                  }}
+                >
+                  Sign Up
+                </Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -231,9 +248,9 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     paddingTop: 0,
     padding: 10,
+    backgroundColor: "#fff",
   },
   image: {
     alignItems: "center",
