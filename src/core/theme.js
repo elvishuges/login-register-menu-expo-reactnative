@@ -16,6 +16,7 @@ export const CustomDefaultTheme = {
     ...NavigationDefaultTheme.colors,
     ...PaperDefaultTheme.colors,
     primary: "#009387",
+    secondary: "#1B76EC",
     background: "#ffffff",
     text: "#333333",
   },

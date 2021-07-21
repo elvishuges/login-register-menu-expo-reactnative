@@ -23,6 +23,13 @@ export default function Users() {
 
   const dispatch = React.useContext(DispatchContext);
 
+  const imageVue = {
+    uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_eqlWTAYpKq2K2qi1aKLydJbnkjHZvUePGA&usqp=CAU",
+  };
+  const imageReactNative = {
+    uri: "https://cdn.evilmartians.com/front/posts/optimizing-react-virtual-dom-explained/cover-a1d5b40.png",
+  };
+
   useEffect(() => {
     async function fetchAPI() {
       let responseUsers = await userActions.getAllUsers(dispatch);
@@ -31,6 +38,10 @@ export default function Users() {
 
       formatDataTableRows(responseHours, responseUsers, responseProjects);
       setLoadingData(false);
+      responseUsers.forEach(
+        (element, index) =>
+          (element.imageUrl = index % 2 === 0 ? imageVue : imageReactNative)
+      );
       setUsers(responseUsers);
     }
 

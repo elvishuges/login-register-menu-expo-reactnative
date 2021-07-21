@@ -1,7 +1,7 @@
 import React from "react";
 import { Dimensions } from "react-native";
 
-import { BarChart } from "react-native-chart-kit";
+import { BarChart, LineChart } from "react-native-chart-kit";
 
 import { formatNumberToStringMonth } from "./../utils/functions";
 
@@ -17,12 +17,12 @@ export default function ChartBar(props) {
           },
         ],
       }}
-      width={Dimensions.get("window").width - 8}
+      width={Dimensions.get("window").width - 10}
       height={200}
       chartConfig={{
         backgroundColor: "#1cc910",
         backgroundGradientFrom: "#eff3ff",
-        backgroundGradientTo: "#efefef",
+        backgroundGradientTo: "#eff3ff",
         decimalPlaces: 0,
         color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
         style: {
@@ -32,7 +32,7 @@ export default function ChartBar(props) {
         formatYLabel: (x) => `${x} hrs`,
       }}
       style={{
-        marginVertical: 10,
+        marginHorizontal: 5,
         borderRadius: 16,
       }}
     />
