@@ -8,8 +8,8 @@ export default function ChartDonot(props) {
   const chartConfig = {
     color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
     strokeWidth: 3, // optional, default 3
-    barPercentage: 0.5,
     useShadowColorFromDataset: false, // optional
+    formatYLabel: (x) => `${x} hrs`,
   };
   return (
     <PieChart
@@ -17,9 +17,10 @@ export default function ChartDonot(props) {
       width={Dimensions.get("window").width - 40}
       height={170}
       chartConfig={chartConfig}
-      yLabelsOffset={50}
+      yLabelsOffset={10}
       accessor={"value"}
       backgroundColor={"transparent"}
+      absolute
     />
   );
 }

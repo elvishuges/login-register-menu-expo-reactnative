@@ -18,6 +18,7 @@ const Dashboard = ({ navigation }) => {
   const [barChartData, setBarChartData] = useState([0, 0, 0]);
   const [donotChartData, setDonotChartData] = useState([]);
   const [totalHours, setTotalHours] = useState(0);
+  const [totalProjects, setTotalProjects] = useState(0);
 
   const dispatch = React.useContext(DispatchContext);
 
@@ -31,6 +32,7 @@ const Dashboard = ({ navigation }) => {
         responseHours
       );
       setDonotChartData(foramtedDonotData);
+      setTotalProjects(foramtedDonotData.length);
       console.log(foramtedDonotData);
     }
 
@@ -78,10 +80,10 @@ const Dashboard = ({ navigation }) => {
     setBarChartLabels(groupKeys);
   };
 
-  const groupByHoursInMonth = (data) => {
+  const groupByHoursInMonth = (hours) => {
     let hoursInMonth = {};
 
-    data.forEach(function (val) {
+    hours.forEach(function (val) {
       var date = val.day.split("-")[1];
       if (hoursInMonth[date] === undefined) {
         hoursInMonth[date] = val.hours;
@@ -96,8 +98,11 @@ const Dashboard = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <ScrollView>
-        <CardGeneralInfos totalHours={totalHours}></CardGeneralInfos>
-        <Text style={styles.chartTitle}>Projetos:</Text>
+        <CardGeneralInfos
+          totalProjects={totalProjects}
+          totalHours={totalHours}
+        ></CardGeneralInfos>
+        <Text style={styles.chartTitle}>Horas/Projeto:</Text>
         <View style={styles.viewChart}>
           <ChartDonot chartData={donotChartData} />
         </View>
